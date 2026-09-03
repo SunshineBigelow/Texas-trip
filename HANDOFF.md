@@ -99,6 +99,43 @@ Each day also has a free-text notes box, saved to `day_notes` 800 ms after you s
 
 ---
 
+## 5b. Languages (English / 한국어)
+
+A pill at the right of the eyebrow row switches the whole app. The choice is
+saved in `localStorage`; with no saved choice, a Korean-language device opens in
+Korean, so family arriving from Korea don't have to hunt for the switch.
+
+Korean lives in three places, one per kind of text:
+
+| Kind of text | Where the Korean lives |
+|---|---|
+| Page copy (headings, food, weather, packing) | `data-ko` attribute on the element in `index.html` |
+| Strings `app.js` builds (buttons, confirms, status) | the `STRINGS` table near the top of `app.js` |
+| Itinerary rows | `title_ko` / `description_ko` / `time_label_ko` columns |
+
+`applyLanguage()` swaps `textContent` for every `[data-ko]` element, caching the
+original English in `data-en` the first time, so switching back is lossless.
+
+Three things to know before editing this:
+
+- **Never put `data-ko` on an element whose contents JavaScript replaces.** The
+  packing list is the cautionary tale: `setupPacking()` swaps each `<li>` for a
+  checkbox label, so the translation is handed down to the inner `.pack-text`
+  span. Translating the `<li>` itself would delete the checkbox.
+- **Everything falls back to English.** `stopField()` uses a Korean column only
+  when it is non-empty, so a stop the family adds themselves appears in both
+  languages rather than vanishing from one.
+- **Editing in Korean writes only the `_ko` columns**, so a translation can't
+  overwrite the English original. The exception is *adding* a stop in Korean:
+  `title` is `NOT NULL`, so both columns take the Korean text and English
+  readers see Korean rather than a blank row.
+
+Korean typography is handled by the `html[lang="ko"]` rules: Noto Sans KR (the
+Latin display face has no Hangul at all), looser line height, and
+`word-break: keep-all` so Hangul breaks between words instead of mid-word.
+
+---
+
 ## 6. The packing checklist
 
 The item *text* stays in `index.html`. Only the ticked state is stored, keyed by each `<li>`'s `data-key`:
@@ -184,6 +221,9 @@ The weather numbers are **climate averages for mid-October, not a live forecast*
 | Itinerary | The running app, or `supabase/setup.sql` for the starting set |
 | Packing items | `.pack-list li[data-key]` in `index.html` |
 | Database tables | `supabase/setup.sql` |
+| Korean page copy | the `data-ko` attribute beside the English text |
+| Korean button/status text | the `STRINGS` table near the top of `app.js` |
+| Korean itinerary | `supabase/translate-korean.sql`, or just edit in the app in Korean |
 
 ---
 
