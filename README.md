@@ -14,14 +14,11 @@ Three steps. Budget about fifteen minutes.
 
 ### 1. Create the database tables
 
-In your Supabase project, open **SQL Editor** and run these two files, in order:
+In your Supabase project: **SQL Editor → New query →** paste the whole of `supabase/setup.sql` **→ Run**.
 
-1. `supabase/schema.sql` — creates the tables, the security policies, and the photo storage bucket.
-2. `supabase/seed.sql` — loads the itinerary that ships in `index.html` into the database.
+One paste, one click. It creates the tables, the security policies, the photo storage bucket, and loads the starting itinerary. Safe to run more than once — it won't duplicate the itinerary or erase anyone's edits.
 
-Both are safe to re-run. `seed.sql` won't duplicate anything if it's already been run.
-
-> If `schema.sql` errors on the storage section with a permissions message, create the bucket by hand instead — **Storage → New bucket → name `trip-photos` → toggle Public ON** — then re-run just the policy statements at the bottom of the file.
+> If it errors on the storage section with a permissions message, create the bucket by hand instead — **Storage → New bucket → name `trip-photos` → toggle Public ON** — then re-run the file.
 
 ### 2. Point the app at your project
 
@@ -35,7 +32,7 @@ window.TRIP_CONFIG = {
 };
 ```
 
-Use the key labelled **anon / public**. It belongs in the browser and is fine to commit — access is controlled by the security policies in `schema.sql`, not by keeping this key secret.
+Use the key labelled **anon / public**. It belongs in the browser and is fine to commit — access is controlled by the security policies in `setup.sql`, not by keeping this key secret.
 
 **Never put the `service_role` key here.** That one bypasses every security policy.
 
@@ -82,8 +79,7 @@ app.js              Navigation + all the Supabase syncing
 config.js           Your two Supabase values — the only file you must edit
 img/                The two hero photos
 supabase/
-  schema.sql        Tables, security policies, storage bucket
-  seed.sql          The starting itinerary
+  setup.sql         Everything: tables, policies, bucket, starting itinerary
 HANDOFF.md          How the app is put together, and how to change it
 ```
 
@@ -108,7 +104,7 @@ Also worth re-confirming closer to the date: the State Fair's closing date, and 
 If the link spreads further than you'd like, in ascending order of effort:
 
 1. **Rotate the URL** — rename the repo. The old link dies immediately.
-2. **Make writes read-only** — in `schema.sql`, change the `for all` policies to `for select`. Everyone can still view; nobody can change anything.
+2. **Make writes read-only** — in `setup.sql`, change the `for all` policies to `for select`. Everyone can still view; nobody can change anything.
 3. **Add real logins** — turn on Supabase Auth and scope the policies to `authenticated`. Most work, and it means everyone needs an account.
 
 ---

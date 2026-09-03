@@ -84,7 +84,7 @@ The click handler only touches buttons and panels sharing a `data-group`. If you
 
 ## 5. The itinerary (database-backed)
 
-Each day panel holds a `.stop-list`. The `.stop` divs inside it are the **offline fallback**, and they're also what `supabase/seed.sql` loads into the database, so the two start out identical.
+Each day panel holds a `.stop-list`. The `.stop` divs inside it are the **offline fallback**, and they're also what `supabase/setup.sql` loads into the database, so the two start out identical.
 
 On load, `loadStops()` reads the `stops` table and replaces the contents of every `.stop-list`. Two deliberate refusals to overwrite:
 
@@ -181,9 +181,9 @@ The weather numbers are **climate averages for mid-October, not a live forecast*
 | Hero photos | files in `img/` |
 | Any content | The panel with matching `data-city` + `data-tab` |
 | Show/hide logic | `render()` in `app.js` |
-| Itinerary | The running app, or `supabase/seed.sql` for the starting set |
+| Itinerary | The running app, or `supabase/setup.sql` for the starting set |
 | Packing items | `.pack-list li[data-key]` in `index.html` |
-| Database tables | `supabase/schema.sql` |
+| Database tables | `supabase/setup.sql` |
 
 ---
 
