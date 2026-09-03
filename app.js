@@ -45,23 +45,26 @@
   // ----------------------------------------------------------
   var statusEl = document.getElementById('syncStatus');
 
-  function setStatus(kind, message) {
+  // Hold the message as a translation KEY rather than finished text, so the
+  // banner re-renders in the new language when someone flips the switch.
+  var statusState = null;
+
+  function setStatus(kind, key) {
+    statusState = kind ? { kind: kind, key: key } : null;
+    renderStatus();
+  }
+
+  function renderStatus() {
     if (!statusEl) return;
-    if (!kind) { statusEl.hidden = true; return; }
+    if (!statusState) { statusEl.hidden = true; return; }
     statusEl.hidden = false;
-    statusEl.className = 'sync-status sync-' + kind;
-    statusEl.textContent = message;
+    statusEl.className = 'sync-status sync-' + statusState.kind;
+    statusEl.textContent = tr(statusState.key);
   }
 
   function reportOffline(err) {
     if (err) console.error('Supabase request failed:', err);
-    setStatus('warn', 'Can’t reach the trip database — showing the built-in plan. Changes won’t save.');
-  }
-
-  if (!db) {
-    setStatus('warn', looksConfigured()
-      ? 'Photo sync is unavailable (the Supabase library didn’t load). Everything else works.'
-      : 'Not connected to Supabase yet — see README.md. Photos and checkboxes stay on this device only.');
+    setStatus('warn', 'offline');
   }
 
   // ----------------------------------------------------------
@@ -93,6 +96,157 @@
       t = setTimeout(function () { fn.apply(self, args); }, ms);
     };
   }
+
+
+  // ==========================================================
+  //  LANGUAGE
+  //  Page copy is translated in place via data-ko attributes on
+  //  the HTML. Strings this file builds at runtime live here.
+  //  Database rows carry their own *_ko columns; see stopField().
+  // ==========================================================
+  var STRINGS = {
+    en: {
+      addStop: "+ Add a stop",
+      editStop: "Edit stop",
+      addStopTitle: "Add a stop",
+      edit: "Edit",
+      delete: "Delete",
+      save: "Save",
+      cancel: "Cancel",
+      timePh: "Time — e.g. Morning, 2:30 PM",
+      titlePh: "What is it?",
+      descPh: "Details (optional)",
+      notesTitle: "Notes for this day",
+      notesPh: "Confirmation numbers, who’s driving, what to book…",
+      saving: "Saving…",
+      saved: "Saved",
+      notSaved: "Not saved",
+      emptyDay: "Nothing planned for this day yet.",
+      noPhotos: "No photos added yet.",
+      photoLoadFail: "Couldn’t load the album — check your connection.",
+      uploading: "Uploading photos…",
+      uploadFail: "Upload failed — check your connection and that the storage bucket exists.",
+      confirmDelStop: "Remove this stop from the plan?",
+      confirmDelPhoto: "Delete this photo for everyone?",
+      offline: "Can’t reach the trip database — showing the built-in plan. Changes won’t save.",
+      notConfigured: "Not connected to Supabase yet — see README.md. Photos and checkboxes stay on this device only.",
+      libMissing: "Photo sync is unavailable (the Supabase library didn’t load). Everything else works.",
+      removePhoto: "Remove photo",
+      tripPhoto: "Trip photo",
+    },
+    ko: {
+      addStop: "+ 일정 추가",
+      editStop: "일정 수정",
+      addStopTitle: "일정 추가",
+      edit: "수정",
+      delete: "삭제",
+      save: "저장",
+      cancel: "취소",
+      timePh: "시간 — 예: 오전, 오후 2:30",
+      titlePh: "무엇인가요?",
+      descPh: "설명 (선택)",
+      notesTitle: "이 날의 메모",
+      notesPh: "예약 번호, 운전할 사람, 예매할 것…",
+      saving: "저장 중…",
+      saved: "저장됨",
+      notSaved: "저장 안 됨",
+      emptyDay: "아직 이 날의 일정이 없어요.",
+      noPhotos: "아직 올라온 사진이 없어요.",
+      photoLoadFail: "앨범을 불러오지 못했어요 — 연결을 확인해 주세요.",
+      uploading: "사진 올리는 중…",
+      uploadFail: "업로드에 실패했어요 — 연결 상태와 저장소 버킷을 확인해 주세요.",
+      confirmDelStop: "이 일정을 삭제할까요?",
+      confirmDelPhoto: "모두에게서 이 사진을 삭제할까요?",
+      offline: "여행 데이터베이스에 연결할 수 없어요 — 기본 일정을 표시합니다. 변경 사항은 저장되지 않아요.",
+      notConfigured: "아직 Supabase에 연결되지 않았어요. 사진과 체크 항목이 이 기기에만 저장됩니다.",
+      libMissing: "사진 동기화를 쓸 수 없어요 (Supabase 라이브러리 로드 실패). 나머지 기능은 정상입니다.",
+      removePhoto: "사진 삭제",
+      tripPhoto: "여행 사진",
+    }
+  };
+
+  var LANG_KEY = 'trip.lang';
+  var currentLang = 'en';
+
+  function detectLang() {
+    var saved = localGet(LANG_KEY, null);
+    if (saved === 'en' || saved === 'ko') return saved;
+    // Default to Korean for a Korean-language device, so family
+    // arriving from Korea get their language without hunting for
+    // the switch.
+    return /^ko\b/i.test(navigator.language || '') ? 'ko' : 'en';
+  }
+
+  function tr(key) {
+    var pack = STRINGS[currentLang] || STRINGS.en;
+    return pack[key] != null ? pack[key] : (STRINGS.en[key] != null ? STRINGS.en[key] : key);
+  }
+
+  // Prefer a row's Korean column when it has one, fall back to English.
+  // A stop added by the family in one language shows that language in
+  // both modes rather than showing nothing.
+  function stopField(stop, field) {
+    if (currentLang === 'ko' && stop[field + '_ko']) return stop[field + '_ko'];
+    return stop[field] || '';
+  }
+
+  function swapAttr(selector, dataKey, prop, lang) {
+    document.querySelectorAll(selector).forEach(function (node) {
+      var enKey = 'en' + dataKey.charAt(0).toUpperCase() + dataKey.slice(1);
+      if (node.dataset[enKey] == null) node.dataset[enKey] = node[prop] || '';
+      node[prop] = (lang === 'ko') ? node.dataset[dataKey] : node.dataset[enKey];
+    });
+  }
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    localSet(LANG_KEY, lang);
+    document.documentElement.lang = lang;
+
+    // Static page copy
+    document.querySelectorAll('[data-ko]').forEach(function (node) {
+      if (node.dataset.en == null) node.dataset.en = node.textContent;
+      node.textContent = (lang === 'ko') ? node.dataset.ko : node.dataset.en;
+    });
+    swapAttr('[data-ko-placeholder]', 'koPlaceholder', 'placeholder', lang);
+    swapAttr('[data-ko-alt]', 'koAlt', 'alt', lang);
+
+    document.querySelectorAll('.lang-btn').forEach(function (b) {
+      var on = b.dataset.lang === lang;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+
+    relabelControls();
+    renderStatus();
+    refreshAll();
+  }
+
+  // Controls this file builds, which have no data-ko to swap.
+  function relabelControls() {
+    document.querySelectorAll('.add-stop-btn').forEach(function (b) { b.textContent = tr('addStop'); });
+    document.querySelectorAll('.day-note-title').forEach(function (h) { h.textContent = tr('notesTitle'); });
+    document.querySelectorAll('.day-note').forEach(function (n) { n.placeholder = tr('notesPh'); });
+    document.querySelectorAll('.stop-form').forEach(function (f) {
+      f.querySelector('[name=time_label]').placeholder = tr('timePh');
+      f.querySelector('[name=title]').placeholder      = tr('titlePh');
+      f.querySelector('[name=description]').placeholder = tr('descPh');
+      f.querySelector('.btn-primary').textContent = tr('save');
+      f.querySelector('.form-row .link-btn').textContent = tr('cancel');
+      if (f.hidden) f.querySelector('.stop-form-title').textContent = tr('addStopTitle');
+    });
+  }
+
+  function refreshAll() {
+    if (!db) return;
+    loadStops();
+    loadPhotos('texas');
+    loadPhotos('vegas');
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () { applyLanguage(btn.dataset.lang); });
+  });
 
   // ==========================================================
   //  NAVIGATION  (unchanged behaviour from the original app)
@@ -164,6 +318,12 @@
       box.dataset.key = key;
 
       var span = el('span', 'pack-text', li.textContent.trim());
+      // Hand the translation to the span: the <li> now holds a checkbox, and
+      // swapping its textContent would destroy it.
+      if (li.dataset.ko) {
+        span.dataset.ko = li.dataset.ko;
+        delete li.dataset.ko;
+      }
 
       label.appendChild(box);
       label.appendChild(span);
@@ -222,18 +382,19 @@
 
   function buildStopNode(stop) {
     var wrap = el('div', 'stop');
-    wrap.appendChild(el('div', 'stop-time', stop.time_label || ''));
+    wrap.appendChild(el('div', 'stop-time', stopField(stop, 'time_label')));
 
     var body = el('div', 'stop-body');
-    body.appendChild(el('h3', null, stop.title));
-    if (stop.description) body.appendChild(el('p', null, stop.description));
+    body.appendChild(el('h3', null, stopField(stop, 'title')));
+    var desc = stopField(stop, 'description');
+    if (desc) body.appendChild(el('p', null, desc));
 
     var actions = el('div', 'stop-actions');
-    var edit = el('button', 'link-btn', 'Edit');
+    var edit = el('button', 'link-btn', tr('edit'));
     edit.type = 'button';
     edit.addEventListener('click', function () { openStopForm(wrap.closest('.day-panel'), stop); });
 
-    var del = el('button', 'link-btn danger', 'Delete');
+    var del = el('button', 'link-btn danger', tr('delete'));
     del.type = 'button';
     del.addEventListener('click', function () { deleteStop(stop); });
 
@@ -250,7 +411,7 @@
     if (!list) return;
     list.textContent = '';
     if (!stops.length) {
-      list.appendChild(el('p', 'photo-empty', 'Nothing planned for this day yet.'));
+      list.appendChild(el('p', 'photo-empty', tr('emptyDay')));
       return;
     }
     stops.forEach(function (s) { list.appendChild(buildStopNode(s)); });
@@ -280,10 +441,10 @@
     if (!form) return;
     form.hidden = false;
     form.dataset.stopId = stop ? stop.id : '';
-    form.querySelector('[name=time_label]').value  = stop ? (stop.time_label || '') : '';
-    form.querySelector('[name=title]').value       = stop ? stop.title : '';
-    form.querySelector('[name=description]').value = stop ? (stop.description || '') : '';
-    form.querySelector('.stop-form-title').textContent = stop ? 'Edit stop' : 'Add a stop';
+    form.querySelector('[name=time_label]').value  = stop ? stopField(stop, 'time_label') : '';
+    form.querySelector('[name=title]').value       = stop ? stopField(stop, 'title') : '';
+    form.querySelector('[name=description]').value = stop ? stopField(stop, 'description') : '';
+    form.querySelector('.stop-form-title').textContent = tr(stop ? 'editStop' : 'addStopTitle');
     var addBtn = panel.querySelector('.add-stop-btn');
     if (addBtn) addBtn.hidden = true;
     form.querySelector('[name=title]').focus();
@@ -298,19 +459,36 @@
 
   function saveStop(panel, form) {
     var id = form.dataset.stopId;
-    var payload = {
-      city:        panel.dataset.city,
-      day_key:     panel.dataset.dayKey,
-      time_label:  form.querySelector('[name=time_label]').value.trim() || null,
-      title:       form.querySelector('[name=title]').value.trim(),
-      description: form.querySelector('[name=description]').value.trim() || null
-    };
-    if (!payload.title) return;
+    var time  = form.querySelector('[name=time_label]').value.trim() || null;
+    var title = form.querySelector('[name=title]').value.trim();
+    var desc  = form.querySelector('[name=description]').value.trim() || null;
+    if (!title) return;
+
+    var payload = { city: panel.dataset.city, day_key: panel.dataset.dayKey };
+
+    // Editing in Korean updates only the Korean columns, so a translation
+    // never overwrites the English original (and vice versa).
+    if (currentLang === 'ko') {
+      payload.time_label_ko = time;
+      payload.title_ko = title;
+      payload.description_ko = desc;
+    } else {
+      payload.time_label = time;
+      payload.title = title;
+      payload.description = desc;
+    }
 
     var req;
     if (id) {
       req = db.from('stops').update(payload).eq('id', id);
     } else {
+      // title is NOT NULL, so a stop added in Korean fills both columns.
+      // English readers then see the Korean text rather than a blank row.
+      if (currentLang === 'ko') {
+        payload.time_label = time;
+        payload.title = title;
+        payload.description = desc;
+      }
       // Put new stops at the end of the day.
       var last = panel.querySelectorAll('.stop-list .stop').length;
       payload.sort_order = (last + 1) * 10 + 1000;
@@ -325,7 +503,7 @@
   }
 
   function deleteStop(stop) {
-    if (!window.confirm('Remove “' + stop.title + '” from the plan?')) return;
+    if (!window.confirm(tr('confirmDelStop'))) return;
     db.from('stops').delete().eq('id', stop.id).then(function (res) {
       if (res.error) { reportOffline(res.error); return; }
       loadStops();
@@ -339,35 +517,35 @@
       var tools = el('div', 'day-tools');
 
       // --- add / edit form ---
-      var addBtn = el('button', 'add-stop-btn', '+ Add a stop');
+      var addBtn = el('button', 'add-stop-btn', tr('addStop'));
       addBtn.type = 'button';
       addBtn.addEventListener('click', function () { openStopForm(panel, null); });
 
       var form = document.createElement('form');
       form.className = 'stop-form';
       form.hidden = true;
-      form.appendChild(el('h4', 'stop-form-title', 'Add a stop'));
+      form.appendChild(el('h4', 'stop-form-title', tr('addStopTitle')));
 
       var timeIn = document.createElement('input');
       timeIn.name = 'time_label';
-      timeIn.placeholder = 'Time — e.g. Morning, 2:30 PM';
+      timeIn.placeholder = tr('timePh');
       timeIn.maxLength = 40;
 
       var titleIn = document.createElement('input');
       titleIn.name = 'title';
-      titleIn.placeholder = 'What is it?';
+      titleIn.placeholder = tr('titlePh');
       titleIn.required = true;
       titleIn.maxLength = 120;
 
       var descIn = document.createElement('textarea');
       descIn.name = 'description';
-      descIn.placeholder = 'Details (optional)';
+      descIn.placeholder = tr('descPh');
       descIn.rows = 3;
 
       var row = el('div', 'form-row');
-      var save = el('button', 'btn-primary', 'Save');
+      var save = el('button', 'btn-primary', tr('save'));
       save.type = 'submit';
-      var cancel = el('button', 'link-btn', 'Cancel');
+      var cancel = el('button', 'link-btn', tr('cancel'));
       cancel.type = 'button';
       cancel.addEventListener('click', function () { closeStopForm(panel); });
       row.appendChild(save);
@@ -384,21 +562,21 @@
 
       // --- per-day notes ---
       var noteWrap = el('div', 'day-note-wrap');
-      noteWrap.appendChild(el('h4', 'stop-form-title', 'Notes for this day'));
+      noteWrap.appendChild(el('h4', 'stop-form-title day-note-title', tr('notesTitle')));
       var note = document.createElement('textarea');
       note.className = 'day-note';
       note.rows = 3;
-      note.placeholder = 'Confirmation numbers, who’s driving, what to book…';
+      note.placeholder = tr('notesPh');
       var noteStatus = el('span', 'note-status', '');
       note.addEventListener('input', debounce(function () {
-        noteStatus.textContent = 'Saving…';
+        noteStatus.textContent = tr('saving');
         db.from('day_notes').upsert({
           city: panel.dataset.city,
           day_key: panel.dataset.dayKey,
           body: note.value,
           updated_at: new Date().toISOString()
         }, { onConflict: 'city,day_key' }).then(function (res) {
-          noteStatus.textContent = res.error ? 'Not saved' : 'Saved';
+          noteStatus.textContent = tr(res.error ? 'notSaved' : 'saved');
           if (res.error) reportOffline(res.error);
           else setTimeout(function () { noteStatus.textContent = ''; }, 2000);
         });
@@ -454,7 +632,7 @@
     var grid = document.getElementById(GRIDS[city].grid);
     if (!grid) return;
 
-    if (!rows.length) { emptyMessage(grid, 'No photos added yet.'); return; }
+    if (!rows.length) { emptyMessage(grid, tr('noPhotos')); return; }
 
     grid.textContent = '';
     rows.forEach(function (row) {
@@ -462,12 +640,12 @@
 
       var img = document.createElement('img');
       img.src = publicUrl(row.storage_path);
-      img.alt = row.caption || ('Trip photo' + (row.added_by ? ' added by ' + row.added_by : ''));
+      img.alt = row.caption || (tr('tripPhoto') + (row.added_by ? ' — ' + row.added_by : ''));
       img.loading = 'lazy';
 
       var remove = el('button', 'photo-remove-btn', '×');
       remove.type = 'button';
-      remove.setAttribute('aria-label', 'Remove photo');
+      remove.setAttribute('aria-label', tr('removePhoto'));
       remove.addEventListener('click', function () { deletePhoto(city, row); });
 
       item.appendChild(img);
@@ -486,7 +664,7 @@
       .then(function (res) {
         if (res.error) {
           reportOffline(res.error);
-          emptyMessage(grid, 'Couldn’t load the album — check your connection.');
+          emptyMessage(grid, tr('photoLoadFail'));
           return;
         }
         renderPhotos(city, res.data || []);
@@ -527,7 +705,7 @@
     var addedBy = nameEl && nameEl.value.trim() ? nameEl.value.trim() : null;
     if (addedBy) localSet(NAME_KEY, addedBy);
 
-    setStatus('info', 'Uploading ' + files.length + ' photo' + (files.length > 1 ? 's' : '') + '…');
+    setStatus('info', 'uploading');
 
     var jobs = files.map(function (file) {
       return downscale(file).then(function (blob) {
@@ -554,13 +732,13 @@
       })
       .catch(function (err) {
         console.error('Upload failed:', err);
-        setStatus('warn', 'Upload failed — check your connection and that the storage bucket exists.');
+        setStatus('warn', 'uploadFail');
         loadPhotos(city);
       });
   }
 
   function deletePhoto(city, row) {
-    if (!window.confirm('Delete this photo for everyone?')) return;
+    if (!window.confirm(tr('confirmDelPhoto'))) return;
 
     db.storage.from(BUCKET).remove([row.storage_path]).then(function () {
       return db.from('photos').delete().eq('id', row.id);
@@ -594,14 +772,14 @@
           var item = el('div', 'photo-item');
           var img = document.createElement('img');
           img.src = ev.target.result;
-          img.alt = 'Trip photo';
+          img.alt = tr('tripPhoto');
 
           var remove = el('button', 'photo-remove-btn', '×');
           remove.type = 'button';
           remove.setAttribute('aria-label', 'Remove photo');
           remove.addEventListener('click', function () {
             item.remove();
-            if (!grid.querySelector('.photo-item')) emptyMessage(grid, 'No photos added yet.');
+            if (!grid.querySelector('.photo-item')) emptyMessage(grid, tr('noPhotos'));
           });
 
           item.appendChild(img);
@@ -656,11 +834,7 @@
   setupPacking();
   setupItineraryTools();
   setupPhotos();
+  applyLanguage(detectLang());   // also performs the first data load
+  if (!db) setStatus('warn', looksConfigured() ? 'libMissing' : 'notConfigured');
   render();
-
-  if (db) {
-    loadStops();
-    loadPhotos('texas');
-    loadPhotos('vegas');
-  }
 })();

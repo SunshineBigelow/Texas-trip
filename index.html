@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dallas & Las Vegas Trip — Oct 16–19</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Karla:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Karla:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
 :root{
   --cream:#F5EFE1;
@@ -60,6 +60,7 @@ body{
   margin-bottom:14px;
 }
 .eyebrow-line svg{flex-shrink:0;}
+.eyebrow-line{min-height:30px;}
 h1{
   font-family:'Big Shoulders Display',sans-serif;
   font-weight:800;
@@ -626,6 +627,109 @@ h1{
   text-overflow:ellipsis;
   white-space:nowrap;
 }
+
+/* ============================================================
+   LANGUAGE SWITCHER + KOREAN TYPOGRAPHY
+   ============================================================ */
+
+.lang-pill{
+  /* In flow at the end of the eyebrow row rather than absolutely
+     positioned: on a narrow screen an absolute pill sat on top of
+     the wrapped h1. */
+  margin-left:auto;
+  display:flex;
+  background:rgba(0,0,0,0.28);
+  border:1px solid rgba(251,247,236,0.28);
+  border-radius:999px;
+  padding:3px;
+  flex-shrink:0;
+}
+.lang-btn{
+  background:none;
+  border:none;
+  border-radius:999px;
+  padding:6px 14px;
+  font-family:'Karla','Noto Sans KR',sans-serif;
+  font-size:12.5px;
+  font-weight:700;
+  line-height:1.2;
+  color:rgba(251,247,236,0.72);
+  cursor:pointer;
+  transition:background .15s, color .15s;
+  white-space:nowrap;
+}
+.lang-btn:hover{color:var(--paper);}
+.lang-btn.active{
+  background:var(--gold);
+  color:var(--navy);
+}
+.lang-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+@media (max-width:520px){
+  .lang-btn{padding:5px 11px;font-size:12px;}
+}
+
+/* Big Shoulders Display has no Hangul, so Korean headings would
+   silently fall back to whatever the device picks. Name the font
+   explicitly instead, and lean on weight for the same emphasis. */
+html[lang="ko"] body,
+html[lang="ko"] .lang-btn,
+html[lang="ko"] .stop-form input,
+html[lang="ko"] .stop-form textarea,
+html[lang="ko"] .day-note,
+html[lang="ko"] .name-input,
+html[lang="ko"] .tab-btn,
+html[lang="ko"] .add-stop-btn,
+html[lang="ko"] .link-btn,
+html[lang="ko"] .btn-primary,
+html[lang="ko"] .upload-btn{
+  font-family:'Noto Sans KR','Karla',sans-serif;
+}
+
+html[lang="ko"] h1,
+html[lang="ko"] .section-title,
+html[lang="ko"] .city-btn,
+html[lang="ko"] .dayw-name,
+html[lang="ko"] .datebar .num,
+html[lang="ko"] .dayw-temps .hi,
+html[lang="ko"] .stop-time,
+html[lang="ko"] .pack-col h3,
+html[lang="ko"] .fair-banner .tag,
+html[lang="ko"] .stop-form-title,
+html[lang="ko"] .map-city-label{
+  font-family:'Noto Sans KR','Big Shoulders Display',sans-serif;
+  font-weight:700;
+}
+
+/* Korean must break between 어절 (word units), not inside them. Without
+   keep-all the browser breaks Hangul at any character, splitting words
+   like 시즌 across two lines. */
+html[lang="ko"] body{
+  word-break:keep-all;
+  overflow-wrap:break-word;
+}
+
+/* Hangul needs a touch more line height and less negative tracking
+   than the Latin display face was set for. */
+html[lang="ko"] h1{
+  font-size:clamp(34px,7.5vw,52px);
+  line-height:1.12;
+  letter-spacing:-0.02em;
+}
+html[lang="ko"] .section-title{font-size:25px;line-height:1.3;}
+html[lang="ko"] .datebar .num{font-size:22px;line-height:1.25;}
+html[lang="ko"] .city-btn{font-size:17px;}
+html[lang="ko"] .stop-time{font-size:14px;}
+html[lang="ko"] .dayw-name{font-size:14px;}
+html[lang="ko"] .section-sub,
+html[lang="ko"] .note-box,
+html[lang="ko"] .stop-body p,
+html[lang="ko"] .food-item p,
+html[lang="ko"] .pack-check{line-height:1.65;}
+
+/* Korean runs wider per idea than English; give the subtitle room */
+html[lang="ko"] .section-sub{max-width:42ch;}
+html[lang="ko"] .hero p{max-width:30ch;}
 </style>
 </head>
 <body>
@@ -634,31 +738,36 @@ h1{
   <div class="hero-inner">
     <div class="eyebrow-line">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 9H21.5L15.5 13.5L18 21L12 16.5L6 21L8.5 13.5L2.5 9H9.5L12 2Z" fill="#DDA323"/></svg>
-      FAMILY TRIP
+      <span data-ko="가족 여행">FAMILY TRIP</span>
+
+      <div class="lang-pill" id="langPill" role="group" aria-label="Language / 언어">
+        <button type="button" class="lang-btn active" data-lang="en" lang="en">EN</button>
+        <button type="button" class="lang-btn" data-lang="ko" lang="ko">한국어</button>
+      </div>
     </div>
-    <h1>Dallas &amp; Las Vegas</h1>
-    <p>Two cities, one trip — planned around what's actually open and your real flights.</p>
+    <h1 data-ko="댈러스 &amp; 라스베이거스">Dallas &amp; Las Vegas</h1>
+    <p data-ko="두 도시, 한 번의 여행 — 실제로 문 여는 곳과 실제 항공편에 맞춰 짰어요.">Two cities, one trip — planned around what's actually open and your real flights.</p>
     <div class="datebar">
-      <div><span class="num">Fri 10/16</span><span class="lbl">arrive Dallas</span></div>
+      <div><span class="num" data-ko="10/16 (금)">Fri 10/16</span><span class="lbl" data-ko="댈러스 도착">arrive Dallas</span></div>
       <div><span class="num">→</span><span class="lbl"></span></div>
-      <div><span class="num">Mon 10/19</span><span class="lbl">arrive Vegas</span></div>
+      <div><span class="num" data-ko="10/19 (월)">Mon 10/19</span><span class="lbl" data-ko="베이거스 도착">arrive Vegas</span></div>
     </div>
   </div>
   <div class="tabs" id="tabsBar">
-    <button class="tab-btn active" data-tab="weather">Weather</button>
-    <button class="tab-btn" data-tab="places">Places</button>
-    <button class="tab-btn" data-tab="food">Food</button>
-    <button class="tab-btn" data-tab="wear">What to Wear</button>
-    <button class="tab-btn" data-tab="pictures">Pictures</button>
+    <button class="tab-btn active" data-tab="weather" data-ko="날씨">Weather</button>
+    <button class="tab-btn" data-tab="places" data-ko="장소">Places</button>
+    <button class="tab-btn" data-tab="food" data-ko="음식">Food</button>
+    <button class="tab-btn" data-tab="wear" data-ko="옷차림">What to Wear</button>
+    <button class="tab-btn" data-tab="pictures" data-ko="사진">Pictures</button>
   </div>
 </div>
 
 <div class="hero-feature">
   <div class="hero-feature-inner" id="heroFeatureTexas">
-    <img src="img/stockyards.jpg" loading="lazy" alt="Longhorn cattle driven down the street at the Fort Worth Stockyards">
+    <img src="img/stockyards.jpg" loading="lazy" alt="Longhorn cattle driven down the street at the Fort Worth Stockyards" data-ko-alt="포트워스 스톡야드 거리를 지나는 롱혼 소 떼">
   </div>
   <div class="hero-feature-inner" id="heroFeatureVegas" style="display:none;">
-    <img src="img/sphere.jpg" loading="lazy" alt="The Sphere lit up at night on the Las Vegas Strip">
+    <img src="img/sphere.jpg" loading="lazy" alt="The Sphere lit up at night on the Las Vegas Strip" data-ko-alt="밤에 불이 켜진 라스베이거스 스트립의 스피어">
   </div>
 </div>
 
@@ -667,163 +776,163 @@ h1{
   <div class="sync-status" id="syncStatus" hidden></div>
 
   <div class="city-switch-row" id="citySwitchRow">
-    <button class="city-btn active" data-city="texas">Texas</button>
-    <button class="city-btn" data-city="vegas">Las Vegas</button>
+    <button class="city-btn active" data-city="texas" data-ko="텍사스">Texas</button>
+    <button class="city-btn" data-city="vegas" data-ko="라스베이거스">Las Vegas</button>
   </div>
 
   <!-- ===================== TEXAS ===================== -->
 
   <!-- TEXAS / WEATHER -->
   <div class="panel active" id="panel-weather-texas" data-city="texas" data-tab="weather">
-    <h2 class="section-title">Weather check — Dallas</h2>
-    <p class="section-sub">Your dates are still ~7 weeks out, so there's no real forecast yet — these are typical mid-October conditions for Dallas, day by day.</p>
+    <h2 class="section-title" data-ko="날씨 — 댈러스">Weather check — Dallas</h2>
+    <p class="section-sub" data-ko="여행까지 아직 7주쯤 남아 실제 예보는 나오지 않았어요. 아래는 댈러스의 10월 중순 평년 날씨를 날짜별로 정리한 거예요.">Your dates are still ~7 weeks out, so there's no real forecast yet — these are typical mid-October conditions for Dallas, day by day.</p>
 
     <div class="day-forecast">
       <div class="dayw-card">
-        <div class="dayw-head"><span class="dayw-name">Fri 10/16</span><span class="dayw-icon">☀️</span></div>
+        <div class="dayw-head"><span class="dayw-name" data-ko="10/16 (금)">Fri 10/16</span><span class="dayw-icon">☀️</span></div>
         <div class="dayw-temps"><span class="hi">80°</span><span class="lo">59°</span></div>
-        <div class="dayw-rain">Rain chance: ~15%</div>
+        <div class="dayw-rain" data-ko="강수 확률: 약 15%">Rain chance: ~15%</div>
       </div>
       <div class="dayw-card">
-        <div class="dayw-head"><span class="dayw-name">Sat 10/17</span><span class="dayw-icon">🌤️</span></div>
+        <div class="dayw-head"><span class="dayw-name" data-ko="10/17 (토)">Sat 10/17</span><span class="dayw-icon">🌤️</span></div>
         <div class="dayw-temps"><span class="hi">79°</span><span class="lo">58°</span></div>
-        <div class="dayw-rain">Rain chance: ~20%</div>
+        <div class="dayw-rain" data-ko="강수 확률: 약 20%">Rain chance: ~20%</div>
       </div>
       <div class="dayw-card">
-        <div class="dayw-head"><span class="dayw-name">Sun 10/18</span><span class="dayw-icon">🌤️</span></div>
+        <div class="dayw-head"><span class="dayw-name" data-ko="10/18 (일)">Sun 10/18</span><span class="dayw-icon">🌤️</span></div>
         <div class="dayw-temps"><span class="hi">78°</span><span class="lo">58°</span></div>
-        <div class="dayw-rain">Rain chance: ~20%</div>
+        <div class="dayw-rain" data-ko="강수 확률: 약 20%">Rain chance: ~20%</div>
       </div>
     </div>
 
-    <div class="note-box">These are historical averages, not a forecast — actual conditions could run several degrees warmer or cooler, and an occasional cold front can drop highs into the 60s. Recheck the real forecast about a week before you fly; it only extends 7–10 days out.</div>
+    <div class="note-box" data-ko="예보가 아니라 과거 평균값이에요. 실제로는 몇 도 더 덥거나 추울 수 있고, 한기가 내려오면 최고기온이 60°F(약 15°C)대까지 떨어지기도 해요. 출발 일주일 전쯤 실제 예보를 다시 확인하세요 — 예보는 7~10일 앞까지만 나옵니다.">These are historical averages, not a forecast — actual conditions could run several degrees warmer or cooler, and an occasional cold front can drop highs into the 60s. Recheck the real forecast about a week before you fly; it only extends 7–10 days out.</div>
   </div>
 
   <!-- TEXAS / PLACES -->
   <div class="panel" id="panel-places-texas" data-city="texas" data-tab="places">
-    <h2 class="section-title">Where to go — Dallas</h2>
-    <p class="section-sub">Built around one thing: the State Fair of Texas is in its final days of the season while you're there.</p>
+    <h2 class="section-title" data-ko="가볼 곳 — 댈러스">Where to go — Dallas</h2>
+    <p class="section-sub" data-ko="핵심은 하나예요. 머무는 동안 텍사스 주 박람회가 시즌 마지막 며칠을 맞습니다.">Built around one thing: the State Fair of Texas is in its final days of the season while you're there.</p>
 
     <div class="fair-banner">
       <div>
-        <p class="tag">State Fair of Texas — closes Oct 18</p>
-        <p>The 2026 fair runs Sept 25–Oct 18 at Fair Park, overlapping all three of your Dallas days. Big Tex, the Texas Star ferris wheel, livestock shows, and fair food are all on-site — worth building a whole day around.</p>
+        <p class="tag" data-ko="텍사스 주 박람회 — 10월 18일 종료">State Fair of Texas — closes Oct 18</p>
+        <p data-ko="2026년 박람회는 9월 25일~10월 18일 페어 파크(Fair Park)에서 열려, 댈러스에 있는 3일과 모두 겹쳐요. 빅 텍스, 텍사스 스타 대관람차, 가축 쇼, 박람회 먹거리가 모두 한자리에 있어 하루를 통째로 잡을 만합니다.">The 2026 fair runs Sept 25–Oct 18 at Fair Park, overlapping all three of your Dallas days. Big Tex, the Texas Star ferris wheel, livestock shows, and fair food are all on-site — worth building a whole day around.</p>
       </div>
     </div>
 
     <div class="day-tabs">
-      <button class="day-btn active" data-group="texas" data-day="1">Fri 10/16</button>
-      <button class="day-btn" data-group="texas" data-day="2">Sat 10/17</button>
-      <button class="day-btn" data-group="texas" data-day="3">Sun 10/18</button>
+      <button class="day-btn active" data-group="texas" data-day="1" data-ko="10/16 (금)">Fri 10/16</button>
+      <button class="day-btn" data-group="texas" data-day="2" data-ko="10/17 (토)">Sat 10/17</button>
+      <button class="day-btn" data-group="texas" data-day="3" data-ko="10/18 (일)">Sun 10/18</button>
     </div>
 
     <div class="day-panel active" data-group="texas" id="day-1" data-city="texas" data-day-key="1">
       <div class="stop-list">
-        <div class="stop"><div class="stop-time">11:44 AM</div><div class="stop-body"><h3>Arrive Dallas-Fort Worth — Delta #2798</h3><p>Landing from Salt Lake City. Gate seat assignment, so allow a little extra time getting off the plane.</p></div></div>
-        <div class="stop"><div class="stop-time">Afternoon</div><div class="stop-body"><h3>Klyde Warren Park</h3><p>An easy first stop after landing — a deck park built over a freeway with a playground, food trucks, and lawn games. Low-key way to stretch legs after travel.</p></div></div>
-        <div class="stop"><div class="stop-time">Evening</div><div class="stop-body"><h3>Dinner nearby</h3><p>The Exchange Food Hall or Rodeo Goat are both a short drive from downtown and flexible for picky eaters — see the Food tab.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="오전 11:44">11:44 AM</div><div class="stop-body"><h3 data-ko="댈러스포트워스 공항 도착 — 델타 #2798">Arrive Dallas-Fort Worth — Delta #2798</h3><p data-ko="솔트레이크시티에서 출발해 도착해요. 좌석이 게이트에서 배정되니 내릴 때 시간을 조금 여유 있게 잡으세요.">Landing from Salt Lake City. Gate seat assignment, so allow a little extra time getting off the plane.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="오후">Afternoon</div><div class="stop-body"><h3 data-ko="클라이드 워런 공원 (Klyde Warren Park)">Klyde Warren Park</h3><p data-ko="도착 후 첫 코스로 부담 없어요. 고속도로 위에 지은 공원으로 놀이터, 푸드트럭, 잔디밭 게임이 있습니다. 비행 뒤 다리 풀기 좋아요.">An easy first stop after landing — a deck park built over a freeway with a playground, food trucks, and lawn games. Low-key way to stretch legs after travel.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="저녁">Evening</div><div class="stop-body"><h3 data-ko="근처에서 저녁">Dinner nearby</h3><p data-ko="익스체인지 푸드홀이나 로데오 고트 둘 다 다운타운에서 차로 금방이고, 입맛 까다로운 사람도 고르기 좋아요 — &#x27;음식&#x27; 탭을 보세요.">The Exchange Food Hall or Rodeo Goat are both a short drive from downtown and flexible for picky eaters — see the Food tab.</p></div></div>
       </div>
     </div>
 
     <div class="day-panel" data-group="texas" id="day-2" data-city="texas" data-day-key="2">
       <div class="stop-list">
-        <div class="stop"><div class="stop-time">All day</div><div class="stop-body"><h3>State Fair of Texas, Fair Park</h3><p>Go on a Saturday for the full atmosphere: midway rides, the auto show, livestock barns, and fried everything. Fair Park is walkable, but plan for a long day — arrive early to beat crowds and heat.</p></div></div>
-        <div class="stop"><div class="stop-time">If time</div><div class="stop-body"><h3>Children's Aquarium at Fair Park</h3><p>Right on the fairgrounds — stingray touch tank and axolotls, a good cooler-down break between fair attractions for younger kids.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="하루 종일">All day</div><div class="stop-body"><h3 data-ko="텍사스 주 박람회, 페어 파크">State Fair of Texas, Fair Park</h3><p data-ko="토요일에 가면 분위기를 제대로 즐길 수 있어요. 놀이기구, 자동차 쇼, 가축 축사, 그리고 온갖 튀김 음식까지. 페어 파크는 걸어 다닐 만하지만 하루가 깁니다 — 사람과 더위를 피하려면 일찍 가세요.">Go on a Saturday for the full atmosphere: midway rides, the auto show, livestock barns, and fried everything. Fair Park is walkable, but plan for a long day — arrive early to beat crowds and heat.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="시간 되면">If time</div><div class="stop-body"><h3 data-ko="페어 파크 어린이 아쿠아리움 (Children&#x27;s Aquarium)">Children's Aquarium at Fair Park</h3><p data-ko="박람회장 안에 있어요. 가오리 체험 수조와 아홀로틀이 있어, 어린아이들이 잠깐 쉬어 가기 좋습니다.">Right on the fairgrounds — stingray touch tank and axolotls, a good cooler-down break between fair attractions for younger kids.</p></div></div>
       </div>
     </div>
 
     <div class="day-panel" data-group="texas" id="day-3" data-city="texas" data-day-key="3">
       <div class="stop-list">
-        <div class="stop"><div class="stop-time">Morning</div><div class="stop-body"><h3>The Dallas World Aquarium</h3><p>Part aquarium, part zoo — jaguars, sloths, and bats alongside the fish tanks. Go early; it gets tight with strollers by midday.</p></div></div>
-        <div class="stop"><div class="stop-time">Midday</div><div class="stop-body"><h3>Museum of Illusions</h3><p>Self-guided, interactive, about an hour — good option if anyone in the group needs a break from walking-heavy stops.</p></div></div>
-        <div class="stop"><div class="stop-time">Sunset</div><div class="stop-body"><h3>Reunion Tower</h3><p>The GeO-Deck gives a 360° view of the skyline — best right at sunset when the city lights start coming on.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="오전">Morning</div><div class="stop-body"><h3 data-ko="댈러스 월드 아쿠아리움 (Dallas World Aquarium)">The Dallas World Aquarium</h3><p data-ko="수족관 반, 동물원 반이에요. 재규어, 나무늘보, 박쥐가 수조와 함께 있습니다. 낮이 되면 유모차로 붐비니 일찍 가세요.">Part aquarium, part zoo — jaguars, sloths, and bats alongside the fish tanks. Go early; it gets tight with strollers by midday.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="낮">Midday</div><div class="stop-body"><h3 data-ko="착시 박물관 (Museum of Illusions)">Museum of Illusions</h3><p data-ko="자유 관람에 체험형이고 한 시간쯤 걸려요. 많이 걷는 일정 사이에 쉬어 가기 좋습니다.">Self-guided, interactive, about an hour — good option if anyone in the group needs a break from walking-heavy stops.</p></div></div>
+        <div class="stop"><div class="stop-time" data-ko="해질녘">Sunset</div><div class="stop-body"><h3 data-ko="리유니언 타워 (Reunion Tower)">Reunion Tower</h3><p data-ko="지오덱(GeO-Deck)에서 360도로 스카이라인이 보여요. 도시에 불이 켜지기 시작하는 해질녘이 가장 좋습니다.">The GeO-Deck gives a 360° view of the skyline — best right at sunset when the city lights start coming on.</p></div></div>
       </div>
     </div>
 
-    <h2 class="section-title" style="margin-top:40px;">Museums &amp; galleries</h2>
-    <p class="section-sub">Worth swapping in on a slower afternoon — checked against current hours for your dates.</p>
+    <h2 class="section-title" style="margin-top:40px;" data-ko="박물관 &amp; 갤러리">Museums &amp; galleries</h2>
+    <p class="section-sub" data-ko="여유로운 오후에 넣기 좋아요 — 여행 날짜 기준 운영 시간을 확인했습니다.">Worth swapping in on a slower afternoon — checked against current hours for your dates.</p>
 
     <div class="food-item">
-      <div><h3>Perot Museum of Nature and Science</h3><p>The strongest all-ages pick in the city — hands-on exhibits, dinosaur fossils, and a kids' water-play area out front (bring a towel). Easily fills 3–4 hours.</p></div>
-      <div class="food-tag">Family · science</div>
+      <div><h3 data-ko="페로 자연과학 박물관 (Perot Museum)">Perot Museum of Nature and Science</h3><p data-ko="온 가족이 즐기기에 댈러스에서 가장 좋은 곳이에요. 체험 전시, 공룡 화석, 그리고 앞마당에 어린이 물놀이터가 있어요(수건 챙기세요). 3~4시간은 금방 갑니다.">The strongest all-ages pick in the city — hands-on exhibits, dinosaur fossils, and a kids' water-play area out front (bring a towel). Easily fills 3–4 hours.</p></div>
+      <div class="food-tag" data-ko="가족 · 과학">Family · science</div>
     </div>
     <div class="food-item">
-      <div><h3>Dallas Museum of Art</h3><p>General admission is free. Wide-ranging collection from ancient to contemporary — closed Mondays and Tuesdays, so plan around that.</p></div>
-      <div class="food-tag">Free · art</div>
+      <div><h3 data-ko="댈러스 미술관 (Dallas Museum of Art)">Dallas Museum of Art</h3><p data-ko="일반 입장은 무료예요. 고대부터 현대까지 폭넓은 소장품이 있습니다. 월·화요일 휴관이니 일정을 그에 맞춰 잡으세요.">General admission is free. Wide-ranging collection from ancient to contemporary — closed Mondays and Tuesdays, so plan around that.</p></div>
+      <div class="food-tag" data-ko="무료 · 미술">Free · art</div>
     </div>
     <div class="food-item">
-      <div><h3>Frontiers of Flight Museum</h3><p>Full-size aircraft, a space capsule, moon rocks, and a window to watch real takeoffs and landings next to Love Field. A hit if anyone in the group is into planes.</p></div>
-      <div class="food-tag">Family · aviation</div>
+      <div><h3 data-ko="프런티어스 오브 플라이트 항공 박물관">Frontiers of Flight Museum</h3><p data-ko="실물 크기 항공기, 우주 캡슐, 월석이 있고, 러브 필드 공항의 실제 이착륙을 볼 수 있는 창도 있어요. 비행기를 좋아한다면 강력 추천.">Full-size aircraft, a space capsule, moon rocks, and a window to watch real takeoffs and landings next to Love Field. A hit if anyone in the group is into planes.</p></div>
+      <div class="food-tag" data-ko="가족 · 항공">Family · aviation</div>
     </div>
     <div class="food-item">
-      <div><h3>The Sixth Floor Museum at Dealey Plaza</h3><p>A thoughtful, text-heavy exhibit on the JFK assassination in the former book depository. Powerful, but better suited to older kids and teens than young children — closed Mon &amp; Tue.</p></div>
-      <div class="food-tag">History · teens+</div>
+      <div><h3 data-ko="식스플로어 박물관, 딜리 플라자">The Sixth Floor Museum at Dealey Plaza</h3><p data-ko="옛 교과서 창고 건물에서 케네디 대통령 암살을 다루는, 글이 많고 차분한 전시예요. 인상적이지만 어린아이보다는 큰 아이·청소년에게 맞아요 — 월·화요일 휴관.">A thoughtful, text-heavy exhibit on the JFK assassination in the former book depository. Powerful, but better suited to older kids and teens than young children — closed Mon &amp; Tue.</p></div>
+      <div class="food-tag" data-ko="역사 · 청소년 이상">History · teens+</div>
     </div>
     <div class="food-item">
-      <div><h3>Design District gallery walk</h3><p>Dragon Street is Dallas's small-gallery strip — Craighead Green Gallery and CINQ Gallery are both an easy walk apart if anyone wants a contemporary-art detour.</p></div>
-      <div class="food-tag">Art galleries</div>
+      <div><h3 data-ko="디자인 디스트릭트 갤러리 산책">Design District gallery walk</h3><p data-ko="드래건 스트리트는 댈러스의 작은 갤러리 거리예요. 크레이그헤드 그린 갤러리와 생크 갤러리가 걸어서 오갈 거리라, 현대미술을 보고 싶다면 들러 보세요.">Dragon Street is Dallas's small-gallery strip — Craighead Green Gallery and CINQ Gallery are both an easy walk apart if anyone wants a contemporary-art detour.</p></div>
+      <div class="food-tag" data-ko="미술 갤러리">Art galleries</div>
     </div>
   </div>
 
   <!-- TEXAS / FOOD -->
   <div class="panel" id="panel-food-texas" data-city="texas" data-tab="food">
-    <h2 class="section-title">What to eat — Dallas</h2>
-    <p class="section-sub">A mix of easy family stops and one just-for-fun night out.</p>
+    <h2 class="section-title" data-ko="뭘 먹을까 — 댈러스">What to eat — Dallas</h2>
+    <p class="section-sub" data-ko="가족끼리 편하게 갈 만한 곳들과, 재미로 가는 하루 저녁을 섞었어요.">A mix of easy family stops and one just-for-fun night out.</p>
 
     <div class="food-item">
-      <div><h3>Rodeo Goat</h3><p>Casual burger spot with a big backyard-bar feel — reliable pick when the group can't agree on cuisine.</p></div>
-      <div class="food-tag">Burgers · casual</div>
+      <div><h3 data-ko="로데오 고트 (Rodeo Goat)">Rodeo Goat</h3><p data-ko="뒷마당 술집 분위기의 편한 버거집이에요. 뭘 먹을지 의견이 갈릴 때 무난한 선택입니다.">Casual burger spot with a big backyard-bar feel — reliable pick when the group can't agree on cuisine.</p></div>
+      <div class="food-tag" data-ko="버거 · 캐주얼">Burgers · casual</div>
     </div>
     <div class="food-item">
-      <div><h3>The Exchange Food Hall</h3><p>A food hall downtown with BBQ, Mediterranean, and crepes under one roof — good for splitting up when everyone wants something different.</p></div>
-      <div class="food-tag">Food hall</div>
+      <div><h3 data-ko="익스체인지 푸드홀 (The Exchange Food Hall)">The Exchange Food Hall</h3><p data-ko="다운타운의 푸드홀로 바비큐, 지중해 음식, 크레페가 한곳에 있어요. 각자 다른 걸 먹고 싶을 때 좋습니다.">A food hall downtown with BBQ, Mediterranean, and crepes under one roof — good for splitting up when everyone wants something different.</p></div>
+      <div class="food-tag" data-ko="푸드홀">Food hall</div>
     </div>
     <div class="food-item">
-      <div><h3>The Rustic</h3><p>Texan comfort food with a big patio and live music — family-style brunch on weekends.</p></div>
-      <div class="food-tag">Texan · brunch</div>
+      <div><h3 data-ko="더 러스틱 (The Rustic)">The Rustic</h3><p data-ko="넓은 야외 자리와 라이브 음악이 있는 텍사스 가정식이에요. 주말에는 가족 단위 브런치를 합니다.">Texan comfort food with a big patio and live music — family-style brunch on weekends.</p></div>
+      <div class="food-tag" data-ko="텍사스식 · 브런치">Texan · brunch</div>
     </div>
     <div class="food-item">
-      <div><h3>Maple Leaf Diner</h3><p>All-day breakfast spot with big portions — a solid, fast option before a fair or museum day.</p></div>
-      <div class="food-tag">Breakfast</div>
+      <div><h3 data-ko="메이플 리프 다이너 (Maple Leaf Diner)">Maple Leaf Diner</h3><p data-ko="하루 종일 아침 메뉴를 파는 곳이고 양이 많아요. 박람회나 박물관 가기 전에 빠르게 먹기 좋습니다.">All-day breakfast spot with big portions — a solid, fast option before a fair or museum day.</p></div>
+      <div class="food-tag" data-ko="아침 식사">Breakfast</div>
     </div>
     <div class="food-item">
-      <div><h3>Yardbird Southern Table</h3><p>Fried chicken, biscuits, and a lively downtown brunch scene.</p></div>
-      <div class="food-tag">Southern</div>
+      <div><h3 data-ko="야드버드 서던 테이블 (Yardbird)">Yardbird Southern Table</h3><p data-ko="프라이드치킨과 비스킷, 그리고 활기찬 다운타운 브런치 분위기.">Fried chicken, biscuits, and a lively downtown brunch scene.</p></div>
+      <div class="food-tag" data-ko="남부 요리">Southern</div>
     </div>
     <div class="food-item">
-      <div><h3>The Magic Time Machine</h3><p>Servers dressed as movie characters, tables built into buses and lunchboxes — the "fun over food" night for kids.</p></div>
-      <div class="food-tag">Themed · family</div>
+      <div><h3 data-ko="매직 타임 머신 (The Magic Time Machine)">The Magic Time Machine</h3><p data-ko="직원들이 영화 캐릭터 분장을 하고, 버스나 도시락통 모양 테이블에서 먹어요. 맛보다 재미로 가는, 아이들을 위한 저녁입니다.">Servers dressed as movie characters, tables built into buses and lunchboxes — the "fun over food" night for kids.</p></div>
+      <div class="food-tag" data-ko="테마 · 가족">Themed · family</div>
     </div>
     <div class="food-item">
-      <div><h3>Fair food at Fair Park</h3><p>If you're there on fair day, this is the one meal to just let happen — corny dogs, fried classics, and whatever oddity is trending that year.</p></div>
-      <div class="food-tag">Fairgrounds</div>
+      <div><h3 data-ko="페어 파크의 박람회 음식">Fair food at Fair Park</h3><p data-ko="박람회 가는 날이라면 이 한 끼는 그냥 흐르는 대로 두세요 — 콘도그, 각종 튀김, 그리고 그해 유행하는 별난 메뉴까지.">If you're there on fair day, this is the one meal to just let happen — corny dogs, fried classics, and whatever oddity is trending that year.</p></div>
+      <div class="food-tag" data-ko="박람회장">Fairgrounds</div>
     </div>
   </div>
 
   <!-- TEXAS / WEAR -->
   <div class="panel" id="panel-wear-texas" data-city="texas" data-tab="wear">
-    <h2 class="section-title">What to wear — Dallas</h2>
-    <p class="section-sub">Built for warm afternoons, cool mornings, and a lot of walking.</p>
+    <h2 class="section-title" data-ko="옷차림 — 댈러스">What to wear — Dallas</h2>
+    <p class="section-sub" data-ko="따뜻한 오후, 선선한 아침, 그리고 많이 걷는 일정에 맞췄어요.">Built for warm afternoons, cool mornings, and a lot of walking.</p>
 
     <div class="pack-grid">
       <div class="pack-col">
-        <h3>Wear each day</h3>
+        <h3 data-ko="매일 입을 것">Wear each day</h3>
         <ul class="pack-list">
-          <li data-key="tx-wear-tshirt">Breathable t-shirt or short sleeves for daytime heat</li>
-          <li data-key="tx-wear-layer">Light layer (flannel, cardigan, or hoodie) for morning and evening cool</li>
-          <li data-key="tx-wear-shoes">Comfortable walking shoes — sneakers over sandals for the fairgrounds</li>
-          <li data-key="tx-wear-pants">Jeans or lightweight pants over shorts, since fairgrounds get dusty</li>
-          <li data-key="tx-wear-hat">Sunglasses and a cap or sun hat</li>
+          <li data-key="tx-wear-tshirt" data-ko="낮 더위에 대비한 통풍 잘 되는 티셔츠나 반팔">Breathable t-shirt or short sleeves for daytime heat</li>
+          <li data-key="tx-wear-layer" data-ko="아침저녁 쌀쌀할 때 걸칠 얇은 겉옷 (플란넬, 가디건, 후디)">Light layer (flannel, cardigan, or hoodie) for morning and evening cool</li>
+          <li data-key="tx-wear-shoes" data-ko="편한 신발 — 박람회장에서는 샌들보다 운동화">Comfortable walking shoes — sneakers over sandals for the fairgrounds</li>
+          <li data-key="tx-wear-pants" data-ko="박람회장은 흙먼지가 있으니 반바지보다 청바지나 얇은 긴바지">Jeans or lightweight pants over shorts, since fairgrounds get dusty</li>
+          <li data-key="tx-wear-hat" data-ko="선글라스와 모자">Sunglasses and a cap or sun hat</li>
         </ul>
       </div>
       <div class="pack-col">
-        <h3>Pack, just in case</h3>
+        <h3 data-ko="혹시 몰라 챙길 것">Pack, just in case</h3>
         <ul class="pack-list">
-          <li data-key="tx-pack-rainjacket">A packable light rain jacket — ~20% chance of rain most days</li>
-          <li data-key="tx-pack-sunscreen">Sunscreen — afternoons still hit near-80°F sun</li>
-          <li data-key="tx-pack-water">A refillable water bottle for fair/museum days</li>
-          <li data-key="tx-pack-warmlayer">One warmer layer in case a cold front rolls through</li>
-          <li data-key="tx-pack-bag">Small backpack or crossbody for hands-free walking</li>
+          <li data-key="tx-pack-rainjacket" data-ko="접히는 얇은 비옷 — 대부분 강수 확률 20% 정도">A packable light rain jacket — ~20% chance of rain most days</li>
+          <li data-key="tx-pack-sunscreen" data-ko="선크림 — 오후 햇볕이 80°F(약 27°C) 가까이 올라가요">Sunscreen — afternoons still hit near-80°F sun</li>
+          <li data-key="tx-pack-water" data-ko="박람회·박물관 다니는 날을 위한 물병">A refillable water bottle for fair/museum days</li>
+          <li data-key="tx-pack-warmlayer" data-ko="한기가 내려올 때를 대비한 두꺼운 옷 한 벌">One warmer layer in case a cold front rolls through</li>
+          <li data-key="tx-pack-bag" data-ko="두 손이 자유롭도록 작은 배낭이나 크로스백">Small backpack or crossbody for hands-free walking</li>
         </ul>
       </div>
     </div>
@@ -833,87 +942,87 @@ h1{
 
   <!-- VEGAS / WEATHER -->
   <div class="panel" id="panel-weather-vegas" data-city="vegas" data-tab="weather">
-    <h2 class="section-title">Weather check — Las Vegas</h2>
-    <p class="section-sub">Same caveat — this is a typical mid-October day for Vegas, not a real forecast yet.</p>
+    <h2 class="section-title" data-ko="날씨 — 라스베이거스">Weather check — Las Vegas</h2>
+    <p class="section-sub" data-ko="마찬가지로 실제 예보가 아니라, 베이거스의 10월 중순 평년 날씨예요.">Same caveat — this is a typical mid-October day for Vegas, not a real forecast yet.</p>
 
     <div class="day-forecast single">
       <div class="dayw-card">
-        <div class="dayw-head"><span class="dayw-name">Mon 10/19</span><span class="dayw-icon">☀️</span></div>
+        <div class="dayw-head"><span class="dayw-name" data-ko="10/19 (월)">Mon 10/19</span><span class="dayw-icon">☀️</span></div>
         <div class="dayw-temps"><span class="hi">82°</span><span class="lo">56°</span></div>
-        <div class="dayw-rain">Rain chance: ~5%</div>
+        <div class="dayw-rain" data-ko="강수 확률: 약 5%">Rain chance: ~5%</div>
       </div>
     </div>
 
-    <div class="note-box">Las Vegas runs drier and sunnier than Dallas this time of year, with a wider day/night swing — expect warm, dry sun by afternoon and a real chill once the sun's down. Recheck the real forecast about a week out; it only extends 7–10 days.</div>
+    <div class="note-box" data-ko="이맘때 라스베이거스는 댈러스보다 건조하고 맑으며, 낮과 밤의 기온 차가 큽니다. 오후에는 따뜻하고 건조하지만 해가 지면 꽤 쌀쌀해져요. 출발 일주일 전쯤 실제 예보를 다시 확인하세요 — 예보는 7~10일 앞까지만 나옵니다.">Las Vegas runs drier and sunnier than Dallas this time of year, with a wider day/night swing — expect warm, dry sun by afternoon and a real chill once the sun's down. Recheck the real forecast about a week out; it only extends 7–10 days.</div>
   </div>
 
   <!-- VEGAS / PLACES -->
   <div class="panel" id="panel-places-vegas" data-city="vegas" data-tab="places">
-    <h2 class="section-title">Where to go — Las Vegas</h2>
-    <p class="section-sub">You land at 8:30am, so it's a real day — these are grouped by Strip location to cut down on walking.</p>
+    <h2 class="section-title" data-ko="가볼 곳 — 라스베이거스">Where to go — Las Vegas</h2>
+    <p class="section-sub" data-ko="오전 8시 30분 도착이라 하루를 온전히 쓸 수 있어요. 걷는 거리를 줄이려고 스트립 위치별로 묶었습니다.">You land at 8:30am, so it's a real day — these are grouped by Strip location to cut down on walking.</p>
 
     <div class="day-tabs">
-      <button class="day-btn active" data-group="vegas" data-day="v1">Mon 10/19</button>
+      <button class="day-btn active" data-group="vegas" data-day="v1" data-ko="10/19 (월)">Mon 10/19</button>
     </div>
 
     <div class="day-panel active" data-group="vegas" id="day-v1" data-city="vegas" data-day-key="v1">
       <div class="stop-list">
-      <div class="stop"><div class="stop-time">7:35 AM</div><div class="stop-body"><h3>Depart Dallas — Southwest #1368</h3><p>Leaves Dallas Love Field (DAL) 7:35am. This is an early one, so bags should be packed and ready to go the night before — no time for a Dallas stop that morning.</p></div></div>
-      <div class="stop"><div class="stop-time">8:30 AM</div><div class="stop-body"><h3>Arrive Las Vegas — Southwest #1368</h3><p>Staying with your nephew visiting from Korea.</p></div></div>
-      <div class="stop"><div class="stop-time">Free</div><div class="stop-body"><h3>Bellagio Conservatory &amp; Botanical Gardens</h3><p>Free seasonal floral display inside the Bellagio — an easy, low-key first stop and usually the least crowded in the morning.</p></div></div>
-      <div class="stop"><div class="stop-time">Free</div><div class="stop-body"><h3>Flamingo Wildlife Habitat</h3><p>A shaded, tropical courtyard inside the Flamingo with real flamingos, koi, and turtles — a nice break from the casino floor and free to walk through.</p></div></div>
-      <div class="stop"><div class="stop-time">1–2 hrs</div><div class="stop-body"><h3>Shark Reef Aquarium, Mandalay Bay</h3><p>Sharks, a stingray touch tank, and a shipwreck room — a reliable hit for kids and grandkids alike. Around $29/adult, $24/kid.</p></div></div>
-      <div class="stop"><div class="stop-time">1–1.5 hrs</div><div class="stop-body"><h3>Museum of Illusions, Las Vegas</h3><p>Same interactive concept as the Dallas one, different exhibits — skip if you already did the Dallas location, otherwise a fun rainy-day-proof option.</p></div></div>
-      <div class="stop"><div class="stop-time">Evening</div><div class="stop-body"><h3>The Sphere</h3><p>Worth it if the group wants one splashy, only-in-Vegas experience — book ahead, since shows and tickets sell out and it runs pricier than a typical outing.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="오전 7:35">7:35 AM</div><div class="stop-body"><h3 data-ko="댈러스 출발 — 사우스웨스트 #1368">Depart Dallas — Southwest #1368</h3><p data-ko="댈러스 러브 필드(DAL)에서 오전 7시 35분 출발이에요. 이른 비행이라 짐은 전날 밤에 다 싸두세요 — 그날 아침에는 댈러스에서 들를 시간이 없습니다.">Leaves Dallas Love Field (DAL) 7:35am. This is an early one, so bags should be packed and ready to go the night before — no time for a Dallas stop that morning.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="오전 8:30">8:30 AM</div><div class="stop-body"><h3 data-ko="라스베이거스 도착 — 사우스웨스트 #1368">Arrive Las Vegas — Southwest #1368</h3><p data-ko="한국에서 온 조카와 함께 지냅니다.">Staying with your nephew visiting from Korea.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="무료">Free</div><div class="stop-body"><h3 data-ko="벨라지오 컨서버토리 &amp; 보태니컬 가든">Bellagio Conservatory &amp; Botanical Gardens</h3><p data-ko="벨라지오 안에 있는 무료 계절 꽃 전시예요. 첫 코스로 부담 없고, 보통 오전이 가장 한산합니다.">Free seasonal floral display inside the Bellagio — an easy, low-key first stop and usually the least crowded in the morning.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="무료">Free</div><div class="stop-body"><h3 data-ko="플라밍고 야생동물 서식지 (Flamingo Wildlife Habitat)">Flamingo Wildlife Habitat</h3><p data-ko="플라밍고 호텔 안의 그늘진 열대 정원으로, 진짜 홍학과 잉어, 거북이가 있어요. 카지노에서 잠깐 벗어나기 좋고 입장은 무료입니다.">A shaded, tropical courtyard inside the Flamingo with real flamingos, koi, and turtles — a nice break from the casino floor and free to walk through.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="1~2시간">1–2 hrs</div><div class="stop-body"><h3 data-ko="샤크 리프 아쿠아리움, 만달레이 베이">Shark Reef Aquarium, Mandalay Bay</h3><p data-ko="상어, 가오리 체험 수조, 난파선 전시실이 있어요. 아이들에게 늘 인기입니다. 성인 약 $29, 어린이 약 $24.">Sharks, a stingray touch tank, and a shipwreck room — a reliable hit for kids and grandkids alike. Around $29/adult, $24/kid.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="1~1.5시간">1–1.5 hrs</div><div class="stop-body"><h3 data-ko="착시 박물관, 라스베이거스">Museum of Illusions, Las Vegas</h3><p data-ko="댈러스와 같은 체험형이지만 전시는 달라요. 댈러스에서 이미 갔다면 건너뛰고, 아니라면 날씨와 상관없이 즐길 수 있는 선택지예요.">Same interactive concept as the Dallas one, different exhibits — skip if you already did the Dallas location, otherwise a fun rainy-day-proof option.</p></div></div>
+      <div class="stop"><div class="stop-time" data-ko="저녁">Evening</div><div class="stop-body"><h3 data-ko="스피어 (The Sphere)">The Sphere</h3><p data-ko="베이거스에서만 할 수 있는 화려한 경험을 하나 원한다면 값어치를 해요. 공연과 티켓이 매진되니 미리 예매하세요. 다른 일정보다는 비쌉니다.">Worth it if the group wants one splashy, only-in-Vegas experience — book ahead, since shows and tickets sell out and it runs pricier than a typical outing.</p></div></div>
       </div>
     </div>
   </div>
 
   <!-- VEGAS / FOOD -->
   <div class="panel" id="panel-food-vegas" data-city="vegas" data-tab="food">
-    <h2 class="section-title">What to eat — Las Vegas</h2>
-    <p class="section-sub">All on or just off the Strip, easy to reach on foot from the Bellagio/Flamingo area.</p>
+    <h2 class="section-title" data-ko="뭘 먹을까 — 라스베이거스">What to eat — Las Vegas</h2>
+    <p class="section-sub" data-ko="모두 스트립 위이거나 바로 옆이라, 벨라지오·플라밍고 근처에서 걸어갈 수 있어요.">All on or just off the Strip, easy to reach on foot from the Bellagio/Flamingo area.</p>
 
     <div class="food-item">
-      <div><h3>Hash House A Go Go, The LINQ</h3><p>Famously huge portions — the "twisted flapjack" pancake and chicken &amp; waffles are built to share. Good first meal after an early flight.</p></div>
-      <div class="food-tag">Breakfast · big portions</div>
+      <div><h3 data-ko="해시 하우스 어 고고, 더 링크">Hash House A Go Go, The LINQ</h3><p data-ko="양이 많기로 유명해요. 트위스티드 플랩잭 팬케이크와 치킨 &amp; 와플은 나눠 먹으라고 나오는 수준입니다. 이른 비행 뒤 첫 끼로 좋아요.">Famously huge portions — the "twisted flapjack" pancake and chicken &amp; waffles are built to share. Good first meal after an early flight.</p></div>
+      <div class="food-tag" data-ko="아침 식사 · 푸짐함">Breakfast · big portions</div>
     </div>
     <div class="food-item">
-      <div><h3>Mon Ami Gabi</h3><p>French bistro with a patio right on the Strip facing the Bellagio fountains — good spot to time a meal around a fountain show.</p></div>
-      <div class="food-tag">Bistro · view</div>
+      <div><h3 data-ko="몽 아미 가비 (Mon Ami Gabi)">Mon Ami Gabi</h3><p data-ko="스트립에 면한 야외 자리에서 벨라지오 분수를 바로 볼 수 있는 프렌치 비스트로예요. 분수 쇼 시간에 맞춰 식사하기 좋습니다.">French bistro with a patio right on the Strip facing the Bellagio fountains — good spot to time a meal around a fountain show.</p></div>
+      <div class="food-tag" data-ko="비스트로 · 전망">Bistro · view</div>
     </div>
     <div class="food-item">
-      <div><h3>Peppermill Restaurant &amp; Fireside Lounge</h3><p>Old-school Vegas diner, huge portions, booth seating, and a retro fireside lounge — a fun, kid-easy option off the main Strip crush.</p></div>
-      <div class="food-tag">Diner · retro</div>
+      <div><h3 data-ko="페퍼밀 레스토랑 &amp; 파이어사이드 라운지">Peppermill Restaurant &amp; Fireside Lounge</h3><p data-ko="옛날 베이거스 분위기의 다이너예요. 양 많고, 부스 좌석에, 복고풍 벽난로 라운지가 있어요. 스트립의 번잡함을 피하면서 아이들과 가기 좋습니다.">Old-school Vegas diner, huge portions, booth seating, and a retro fireside lounge — a fun, kid-easy option off the main Strip crush.</p></div>
+      <div class="food-tag" data-ko="다이너 · 복고">Diner · retro</div>
     </div>
     <div class="food-item">
-      <div><h3>Yardbird Southern Table</h3><p>Fried chicken and biscuits inside The Venetian — same easy family fit as the Dallas location, open late.</p></div>
-      <div class="food-tag">Southern</div>
+      <div><h3 data-ko="야드버드 서던 테이블 (Yardbird)">Yardbird Southern Table</h3><p data-ko="베네시안 안에 있는 프라이드치킨과 비스킷이에요. 댈러스 지점과 마찬가지로 가족끼리 편하고, 늦게까지 합니다.">Fried chicken and biscuits inside The Venetian — same easy family fit as the Dallas location, open late.</p></div>
+      <div class="food-tag" data-ko="남부 요리">Southern</div>
     </div>
   </div>
 
   <!-- VEGAS / WEAR -->
   <div class="panel" id="panel-wear-vegas" data-city="vegas" data-tab="wear">
-    <h2 class="section-title">What to wear — Las Vegas</h2>
-    <p class="section-sub">Dry desert heat by day, real chill after sunset, and a lot of Strip walking.</p>
+    <h2 class="section-title" data-ko="옷차림 — 라스베이거스">What to wear — Las Vegas</h2>
+    <p class="section-sub" data-ko="낮에는 건조한 사막 더위, 해가 지면 제법 쌀쌀하고, 스트립을 많이 걷습니다.">Dry desert heat by day, real chill after sunset, and a lot of Strip walking.</p>
 
     <div class="pack-grid">
       <div class="pack-col">
-        <h3>Wear that day</h3>
+        <h3 data-ko="그날 입을 것">Wear that day</h3>
         <ul class="pack-list">
-          <li data-key="lv-wear-tshirt">Breathable t-shirt for the warm, dry afternoon sun</li>
-          <li data-key="lv-wear-layer">A real layer for evening — desert temps drop fast after sunset</li>
-          <li data-key="lv-wear-shoes">Comfortable walking shoes — the Strip is longer and flatter-looking than it feels</li>
-          <li data-key="lv-wear-hat">Sunglasses and a cap or sun hat</li>
+          <li data-key="lv-wear-tshirt" data-ko="따뜻하고 건조한 오후 햇볕에 맞는 통풍 잘 되는 티셔츠">Breathable t-shirt for the warm, dry afternoon sun</li>
+          <li data-key="lv-wear-layer" data-ko="저녁용 제대로 된 겉옷 — 사막은 해가 지면 기온이 빨리 떨어져요">A real layer for evening — desert temps drop fast after sunset</li>
+          <li data-key="lv-wear-shoes" data-ko="편한 신발 — 스트립은 보기보다 훨씬 길어요">Comfortable walking shoes — the Strip is longer and flatter-looking than it feels</li>
+          <li data-key="lv-wear-hat" data-ko="선글라스와 모자">Sunglasses and a cap or sun hat</li>
         </ul>
       </div>
       <div class="pack-col">
-        <h3>Pack, just in case</h3>
+        <h3 data-ko="혹시 몰라 챙길 것">Pack, just in case</h3>
         <ul class="pack-list">
-          <li data-key="lv-pack-sweater">Light sweater or jacket for cold casino A/C indoors</li>
-          <li data-key="lv-pack-sunscreen">Sunscreen — desert sun is stronger than it feels</li>
-          <li data-key="lv-pack-water">A refillable water bottle — humidity is very low</li>
-          <li data-key="lv-pack-bag">Small backpack or crossbody for hands-free walking</li>
+          <li data-key="lv-pack-sweater" data-ko="카지노 실내 에어컨이 추우니 얇은 스웨터나 재킷">Light sweater or jacket for cold casino A/C indoors</li>
+          <li data-key="lv-pack-sunscreen" data-ko="선크림 — 사막 햇볕은 느끼는 것보다 강해요">Sunscreen — desert sun is stronger than it feels</li>
+          <li data-key="lv-pack-water" data-ko="물병 — 습도가 아주 낮아요">A refillable water bottle — humidity is very low</li>
+          <li data-key="lv-pack-bag" data-ko="두 손이 자유롭도록 작은 배낭이나 크로스백">Small backpack or crossbody for hands-free walking</li>
         </ul>
       </div>
     </div>
@@ -921,33 +1030,33 @@ h1{
 
   <!-- TEXAS / PICTURES -->
   <div class="panel" id="panel-pictures-texas" data-city="texas" data-tab="pictures">
-    <h2 class="section-title">Pictures — Dallas</h2>
-    <p class="section-sub">Add photos from the trip. Everyone with the link sees the same album, on any device.</p>
+    <h2 class="section-title" data-ko="사진 — 댈러스">Pictures — Dallas</h2>
+    <p class="section-sub" data-ko="여행 사진을 올려 주세요. 링크가 있는 사람은 어느 기기에서든 같은 앨범을 봅니다.">Add photos from the trip. Everyone with the link sees the same album, on any device.</p>
 
     <div class="photo-controls">
-      <label class="upload-btn" for="photoUploadTexas">Upload photo</label>
+      <label class="upload-btn" for="photoUploadTexas" data-ko="사진 올리기">Upload photo</label>
       <input class="upload-input" type="file" id="photoUploadTexas" accept="image/*" multiple>
-      <input class="name-input" type="text" id="uploaderNameTexas" placeholder="Your name (optional)" maxlength="40">
+      <input class="name-input" type="text" id="uploaderNameTexas" placeholder="Your name (optional)" data-ko-placeholder="이름 (선택)" maxlength="40">
     </div>
 
     <div class="photo-grid" id="photoGridTexas">
-      <p class="photo-empty">No photos added yet.</p>
+      <p class="photo-empty" data-ko="아직 올라온 사진이 없어요.">No photos added yet.</p>
     </div>
   </div>
 
   <!-- VEGAS / PICTURES -->
   <div class="panel" id="panel-pictures-vegas" data-city="vegas" data-tab="pictures">
-    <h2 class="section-title">Pictures — Las Vegas</h2>
-    <p class="section-sub">Add photos from the trip. Everyone with the link sees the same album, on any device.</p>
+    <h2 class="section-title" data-ko="사진 — 라스베이거스">Pictures — Las Vegas</h2>
+    <p class="section-sub" data-ko="여행 사진을 올려 주세요. 링크가 있는 사람은 어느 기기에서든 같은 앨범을 봅니다.">Add photos from the trip. Everyone with the link sees the same album, on any device.</p>
 
     <div class="photo-controls">
-      <label class="upload-btn" for="photoUploadVegas">Upload photo</label>
+      <label class="upload-btn" for="photoUploadVegas" data-ko="사진 올리기">Upload photo</label>
       <input class="upload-input" type="file" id="photoUploadVegas" accept="image/*" multiple>
-      <input class="name-input" type="text" id="uploaderNameVegas" placeholder="Your name (optional)" maxlength="40">
+      <input class="name-input" type="text" id="uploaderNameVegas" placeholder="Your name (optional)" data-ko-placeholder="이름 (선택)" maxlength="40">
     </div>
 
     <div class="photo-grid" id="photoGridVegas">
-      <p class="photo-empty">No photos added yet.</p>
+      <p class="photo-empty" data-ko="아직 올라온 사진이 없어요.">No photos added yet.</p>
     </div>
   </div>
 

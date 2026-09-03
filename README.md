@@ -3,6 +3,7 @@
 A family trip app for **Fri Oct 16 – Mon Oct 19, 2026**. Static HTML, hosted free on GitHub Pages, with Supabase behind it for the parts that need to be shared between people.
 
 - **Weather · Places · Food · What to Wear · Pictures**, each split between **Texas** and **Las Vegas**.
+- **English / 한국어** — a switch in the top right translates the whole app. A Korean-language phone opens in Korean automatically.
 - The photo album, packing checkboxes, and itinerary edits are **shared** — everyone with the link sees the same thing on any device.
 - Everything else is plain HTML and works with no network at all.
 
@@ -17,6 +18,8 @@ Three steps. Budget about fifteen minutes.
 In your Supabase project: **SQL Editor → New query →** paste the whole of `supabase/setup.sql` **→ Run**.
 
 One paste, one click. It creates the tables, the security policies, the photo storage bucket, and loads the starting itinerary. Safe to run more than once — it won't duplicate the itinerary or erase anyone's edits.
+
+Then run `supabase/translate-korean.sql` the same way, to add the Korean itinerary. (The app works without it — the Places tab just stays English while everything else translates.)
 
 The storage section at the end can't abort the script — on some projects the SQL Editor doesn't own Supabase's storage tables, so those statements warn instead of failing. If you see a **MANUAL STEP NEEDED** notice, everything else still saved; follow the instructions it prints to add three storage policies through **Storage → trip-photos → Policies**.
 
@@ -79,7 +82,8 @@ app.js              Navigation + all the Supabase syncing
 config.js           Your two Supabase values — the only file you must edit
 img/                The two hero photos
 supabase/
-  setup.sql         Everything: tables, policies, bucket, starting itinerary
+  setup.sql            Everything: tables, policies, bucket, starting itinerary
+  translate-korean.sql Korean columns + translations for the itinerary
 HANDOFF.md          How the app is put together, and how to change it
 ```
 
@@ -92,6 +96,7 @@ Content lives in `index.html` and is meant to be edited by hand — see `HANDOFF
 - **Colors** — the `:root` block at the top of the `<style>` section.
 - **Any content panel** — find the `<div class="panel">` whose `data-city` and `data-tab` match what you're looking for.
 - **Itinerary** — edit it in the running app instead; those changes save to Supabase and everyone sees them.
+- **Korean text** — each translated element carries a `data-ko` attribute beside its English text, so the two sit together in `index.html`. Editing a stop while the app is in Korean writes only the Korean columns, so a translation never overwrites the English original.
 
 ### Before you fly
 
