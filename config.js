@@ -16,8 +16,8 @@
    ============================================================ */
 
 window.TRIP_CONFIG = {
-  supabaseUrl:     'YOUR_SUPABASE_URL',
-  supabaseAnonKey: 'YOUR_SUPABASE_ANON_KEY',
+  supabaseUrl:     'https://bmyjbioioqsrsuqabehj.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteWpiaW9pb3FzcnN1cWFiZWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NjE1NDEsImV4cCI6MjEwNDAzNzU0MX0.84CzE2HeFTTouyLmOfcyosTR2PS6dlLQy4SkbN7U-RI',
 
   // Storage bucket created by supabase/schema.sql — leave as-is
   // unless you named it something else.
