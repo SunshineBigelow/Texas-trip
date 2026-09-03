@@ -18,7 +18,7 @@ In your Supabase project: **SQL Editor → New query →** paste the whole of `s
 
 One paste, one click. It creates the tables, the security policies, the photo storage bucket, and loads the starting itinerary. Safe to run more than once — it won't duplicate the itinerary or erase anyone's edits.
 
-> If it errors on the storage section with a permissions message, create the bucket by hand instead — **Storage → New bucket → name `trip-photos` → toggle Public ON** — then re-run the file.
+The storage section at the end can't abort the script — on some projects the SQL Editor doesn't own Supabase's storage tables, so those statements warn instead of failing. If you see a **MANUAL STEP NEEDED** notice, everything else still saved; follow the instructions it prints to add three storage policies through **Storage → trip-photos → Policies**.
 
 ### 2. Point the app at your project
 
