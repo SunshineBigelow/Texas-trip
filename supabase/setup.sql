@@ -18,8 +18,8 @@
 --  some Supabase projects the SQL Editor isn't the owner of the
 --  storage tables, so those statements are wrapped to warn
 --  instead of fail. If you see a "MANUAL STEP NEEDED" notice,
---  everything else still worked — just create the bucket by hand:
---      Storage -> New bucket -> name it  trip-photos  -> Public ON
+--  everything else still worked — follow the steps it prints
+--  under the "Messages" tab to finish the photo bucket by hand.
 --
 -- ------------------------------------------------------------
 --  ACCESS MODEL: "anyone with the link".
